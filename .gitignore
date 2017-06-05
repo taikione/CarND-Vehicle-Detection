@@ -1,0 +1,10 @@
+*.DS_Store
+writeup_template.md
+writeup_template_j.md
+.ipynb_checkpoints
+tunings_imgs/
+outputs/
+mini_test_samples/
+data/
+
+__pycache__
