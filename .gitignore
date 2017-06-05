@@ -6,5 +6,6 @@ tunings_imgs/
 outputs/
 mini_test_samples/
 data/
+result/
 
 __pycache__
