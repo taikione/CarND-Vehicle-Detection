@@ -5,14 +5,14 @@
 
 The steps of this project are the following:
 
-* Perform a Histogram of Oriented Gradients (HOG) feature extraction on a labeled training set of images and append binned color feature and hisgram of color  to HOG feature vector.
+* Perform a Histogram of Oriented Gradients (HOG) feature extraction on a labeled training set of images and append binned color feature and hisgram of color to HOG feature vector.
 * Train a classifier Linear SVM classifier
 * Implement a sliding-window technique and use your trained classifier to search for vehicles in images.
 * Run the pipeline on a video stream (full project_video.mp4) and create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles.
 
 [//]: # (Image References)
-[image1]: ./examples/car_not_car.png
-[image2]: ./examples/HOG_example.jpg
+[non-vehicles]: ./examples/nonvehicles.png
+[vehicles]: ./examples/vehicles.png
 [image3]: ./examples/sliding_windows.jpg
 [image4]: ./examples/sliding_window.jpg
 [image5]: ./examples/bboxes_and_heat.png
@@ -25,24 +25,31 @@ The steps of this project are the following:
 
 ---
 
-### Histogram of Oriented Gradients (HOG)
-
 <!--####1. Explain how (and identify where in your code) you extracted HOG features from the training images.-->
-#### 1. Extract HOG feature from the dataset images
+#### Extract features from the dataset images
 <!--
-HOG特徴量を使うにあたり、入力画像をYCrCbへ変換し、それぞれのチャネル毎にHOG特徴量を計算した。それに加え、binned color featureと
+HOG特徴量を使うにあたり、入力画像をYCrCbへ変換し、それぞれのチャネル毎にHOG特徴量を計算した。それに加え、binned color featureと色ヒストグラムも特徴として使用した
 -->
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).
 
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+I started by reading in all the `vehicle` and `non-vehicle` images list. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-![alt text][image1]
+![alt text][non-vehicle]
+![alt text][vehicle]
+
+For this project, I used following three feature extracting methods. The Used each parameter value is also given below.
+
+- Histgram of Oriented Gradients
+- Binned color feature
+
+
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
 Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
+パラメータはcells_per_block=(2,2)で固定して、pixels_per_cell=(8,8), (7,7), (6,6)を試してみて最も認識結果が良かった(8,8)を使用した。
 
 ![alt text][image2]
 
@@ -50,7 +57,7 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 I tried various combinations of parameters and...
 
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+####2. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using...
 
