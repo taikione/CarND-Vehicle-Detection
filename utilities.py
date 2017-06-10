@@ -65,7 +65,7 @@ def extract_features(imgs, orient, pix_per_cell, cell_per_block):
 
         # use png image
         image = mpimg.imread(file)
-        #image = (image*255).astype(np.uint8) # 0-1 float32 to 0-255 uint8
+        image = (image*255).astype(np.uint8) # 0-1 float32 to 0-255 uint8
         feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
         #feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
 
@@ -92,17 +92,14 @@ def extract_features(imgs, orient, pix_per_cell, cell_per_block):
 
 
 def window_search(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell,
-                  cell_per_block, spatial_size=(32, 32), hist_bins=32):
+                  cell_per_block, spatial_size=(32, 32), hist_bins=32, vis_window=False):
 
     car_boxes = []
-    # jpg image
     draw_img = np.copy(img)
 
     img_tosearch = img[ystart:ystop, :, :]
-    img_tosearch = img_tosearch.astype(np.float32)/255.0
 
     ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YCrCb)
-    #ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YUV)
 
     if scale != 1:
         imshape = ctrans_tosearch.shape
@@ -161,11 +158,20 @@ def window_search(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell
                 xbox_left = np.int(xleft * scale)
                 ytop_draw = np.int(ytop * scale)
                 win_draw = np.int(window * scale)
-                # cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
                 car_boxes.append(((xbox_left, ytop_draw + ystart), (xbox_left + win_draw, ytop_draw + win_draw + ystart)))
 
+            if vis_window == True:
+                xbox_left = np.int(xleft * scale)
+                ytop_draw = np.int(ytop * scale)
+                win_draw = np.int(window * scale)
+                cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
+
+
+    if vis_window == True:
+        return draw_img
+
     return car_boxes
-    # return draw_img
+
 
 def add_heat(heatmap, bbox_list):
     # Iterate through list of bboxes
@@ -213,10 +219,10 @@ def draw_labeled_bboxes(img, labels, svc=None, vis_prob=False):
     # Return the image
     return img
 
+
 def predict_window(img, svc):
-    img255 = img.astype(np.float32)/255.0
-    img255 = cv2.resize(img255, (64, 64))
-    feature_image = cv2.cvtColor(img255, cv2.COLOR_RGB2YCrCb)
+    img = cv2.resize(img, (64, 64))
+    feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
 
     hog_features = []
 
@@ -236,7 +242,7 @@ def predict_window(img, svc):
     return prob
 
 
-def conpare_prev_frame(prev_bboxes, current_bboxes):
+def compare_prev_frame(prev_bboxes, current_bboxes):
     """
     Remove bounding boxes that did not overlap with previous frame bounding boxes.
     each bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
@@ -251,16 +257,16 @@ def conpare_prev_frame(prev_bboxes, current_bboxes):
             if overlap == 0:
 
                 # check lengthwise direction
-                is_include_min_x_prev_bbox = current_bbox[0][0] in range(prev_bbox[0][0], prev_bbox[1][0])
-                is_include_max_y_prev_bbox = current_bbox[1][1] in range(prev_bbox[0][1], prev_bbox[1][1])
+                is_include_min_x_prev_bbox = current_bbox[0][0] in range(prev_bbox[0][0], prev_bbox[1][0]+1)
+                is_include_max_y_prev_bbox = current_bbox[1][1] in range(prev_bbox[0][1], prev_bbox[1][1]+1)
 
                 if is_include_min_x_prev_bbox and is_include_max_y_prev_bbox:
 
                     overlap = 1
 
                 # check widthwise direction
-                is_include_min_x_prev_bbox = current_bbox[1][1] in range(prev_bbox[0][0], prev_bbox[1][0])
-                is_include_max_y_prev_bbox = current_bbox[0][0] in range(prev_bbox[0][1], prev_bbox[1][1])
+                is_include_min_x_prev_bbox = current_bbox[1][1] in range(prev_bbox[0][0], prev_bbox[1][0]+1)
+                is_include_max_y_prev_bbox = current_bbox[0][0] in range(prev_bbox[0][1], prev_bbox[1][1]+1)
 
                 if is_include_min_x_prev_bbox and is_include_max_y_prev_bbox:
 

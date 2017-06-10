@@ -17,8 +17,8 @@ def main(input_fname, output_fname):
     PIX_PER_CELL = 8
     CELL_PER_BLOCK = 2
     ORIENT = 9
-    CHECK_FRAME_RANGE = 5
-    THRESHOLD = 1
+    CHECK_FRAME_RANGE = 11
+    THRESHOLD = 0
     TARGET_SCALE = 1.1
 
     # Divide up into cars and notcars
@@ -56,26 +56,8 @@ def main(input_fname, output_fname):
     X_train, X_test, y_train, y_test = train_test_split(scaled_X, y, test_size=0.1, random_state=rand_state)
 
 
-    # train CVM and parameter tuneing
-    # Grid Search for SVM
-    svc = LinearSVC()
-
-    parameters = [{
-        'C' : [x/100 for x in list(range(1, 30, 3))],
-        'loss': ['hinge'],
-        'penalty': ['l2']
-    }]
-
-    clf = GridSearchCV(svc, parameters, cv=5, scoring='accuracy')
-    clf.fit(X_test, y_test)
-
-    print("best parameter:{}".format(clf.best_params_))
-    mean_test_score = ["{0:.6f}".format(s) for s in clf.cv_results_['mean_test_score']]
-    std_test_score = ["{0:.6f}".format(s) for s in clf.cv_results_['std_test_score']]
-
-    pprint.pprint(list(zip(mean_test_score, std_test_score, clf.cv_results_['params'])))
-
-    svc = LinearSVC(C=clf.best_params_['C'], loss=clf.best_params_['loss'], penalty=clf.best_params_['penalty'])
+    # Refer to VehicleDetection-LinearSVM.ipynb
+    svc = LinearSVC(C=0.0004, loss='hinge', penalty='l2')
 
     # Check the training time for the SVC
     t=time.time()
@@ -108,9 +90,7 @@ def main(input_fname, output_fname):
 
 
 if __name__ == "__main__":
-    # input_fname = "project_video.mp4"
-    # output_fname = "result_project_video.mp4"
-    input = "test_images/test_video3.mp4"
-    output = "hogehoge_video.mp4"
+    input_name = "project_video.mp4"
+    output_name = "result_project_video_scale11_f11.mp4"
 
-    main(input_fname=input, output_fname=output)
+    main(input_fname=input_name, output_fname=output_name)

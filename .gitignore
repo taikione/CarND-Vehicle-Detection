@@ -11,7 +11,9 @@ result/
 */test_video2.mp4
 */test_video3.mp4
 VehicleDetection-LinearSVM-Copy1.ipynb
-*.mp4
 movie2images/
+result_test_video3/
+result_test_video3_2/
+test_video3images/
 
 __pycache__
