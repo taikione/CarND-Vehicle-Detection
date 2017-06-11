@@ -140,6 +140,7 @@ def window_search(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell
 
             xleft = xpos * pix_per_cell
             ytop = ypos * pix_per_cell
+            # 1*2*8 = 16
 
             # Extract the image patch
             subimg = cv2.resize(ctrans_tosearch[ytop:ytop + window, xleft:xleft + window], (64, 64))
@@ -160,11 +161,11 @@ def window_search(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell
                 win_draw = np.int(window * scale)
                 car_boxes.append(((xbox_left, ytop_draw + ystart), (xbox_left + win_draw, ytop_draw + win_draw + ystart)))
 
-            if vis_window == True:
-                xbox_left = np.int(xleft * scale)
-                ytop_draw = np.int(ytop * scale)
-                win_draw = np.int(window * scale)
-                cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
+                if vis_window == True:
+                    xbox_left = np.int(xleft * scale)
+                    ytop_draw = np.int(ytop * scale)
+                    win_draw = np.int(window * scale)
+                    cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
 
 
     if vis_window == True:
